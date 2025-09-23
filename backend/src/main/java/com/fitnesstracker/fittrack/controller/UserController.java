@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/users")
 public class UserController{
     private final UserRep repo;
 
