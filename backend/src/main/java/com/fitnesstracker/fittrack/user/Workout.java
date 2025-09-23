@@ -3,9 +3,10 @@ package com.fitnesstracker.fittrack.user;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@Entity
 public class Workout {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String type; 
