@@ -13,5 +13,6 @@ public class User {
     private String email;
     private String password;
 
+    @OneToMany
     private List<Workout> workouts;
 }
