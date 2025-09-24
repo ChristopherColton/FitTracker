@@ -28,7 +28,7 @@ public class WorkoutController {
     public Workout getWorkoutById(@PathVariable Long id) {
         return repo.findById(id).orElse(null);
     }
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public List<Workout> getWorkoutsByUserId(@PathVariable Long userId) {
         return repo.findByUserId(userId);
     }

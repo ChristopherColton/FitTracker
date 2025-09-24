@@ -28,4 +28,9 @@ public class UserController{
     public User getUserById(@PathVariable Long id){
         return repo.findById(id).orElse(null);
     }   
+
+    @GetMapping("/test")
+    public String testUsers() {
+        return "Users endpoint is working 🚀";
+    }
 }
