@@ -5,6 +5,7 @@ import com.fitnesstracker.fittrack.user.Workout;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/workouts")
 public class WorkoutController {

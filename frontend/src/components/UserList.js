@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
+import axios from 'axios';
 
-const UserList = () => {
+function UserList() {
     const [users, setUsers] = useState([]);
-
     useEffect(() => {
-        api.get('/users')
-            .then(res => {
-                setUsers(res.data);
+        axios.get('http://localhost:8080/users')
+            .then(response => {
+                setUsers(response.data);   
             })
-            .catch(err => {
-                console.error('Error fetching users:', err);
+            .catch(error => {
+                console.error('There was an error fetching the users!', error);
             });
     }, []);
 
     return (
         <div>
             <h2>User List</h2>
-            <ul>
+            <ul style= {{ listStyleType: 'none', padding: 0 }}>
                 {users.map(user => (
                     <li key={user.id}>
-                        {user.username} ({user.email})
+                        <strong>{user.username}</strong> - ({user.email})
                     </li>
                 ))}
             </ul>
