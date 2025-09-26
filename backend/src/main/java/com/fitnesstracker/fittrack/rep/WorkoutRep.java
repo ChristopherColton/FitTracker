@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface WorkoutRep extends JpaRepository<Workout, Long>{
     List<Workout> findByUserId(Long userId);
+    List<Workout> findByUserIdAndExercise(Long userId, String exercise);
 }
