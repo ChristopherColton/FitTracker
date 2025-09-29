@@ -34,4 +34,10 @@ public class UserController{
     public String testUsers() {
         return "Users endpoint is working 🚀";
     }
+
+    @PostMapping("/login")
+    public User loginUser(@RequestBody User loginUser) {
+        return repo.findByEmailAndPassword(loginUser.getEmail(), loginUser.getPassword())
+        .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+    }
 }
