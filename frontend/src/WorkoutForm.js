@@ -19,7 +19,7 @@ function WorkoutForm() {
             weight,
             duration,
             date,
-            user: { id: 1 } // Hardcoded; replace with actual user ID
+            user: { id: 1 } // Hardcoded pwease replace with actual user ID
         };
 
         try {
