@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function WorkoutForm() {
+function WorkoutForm({ user }) {
     const [exercise, setExercise] = useState('');
     const [sets, setSets] = useState('');
     const [reps, setReps] = useState('');
@@ -12,6 +12,11 @@ function WorkoutForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!user || !user.id) {
+            alert('User not logged in!');
+            return;
+        }
+
         const workout = {
             exercise,
             sets,
@@ -19,7 +24,7 @@ function WorkoutForm() {
             weight,
             duration,
             date,
-            user: { id: 1 } // Hardcoded pwease replace with actual user ID
+            user: { id: user.id } // Hardcoded pwease replace with actual user ID
         };
 
         try {
