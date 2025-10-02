@@ -10,14 +10,16 @@ function RegisterForm({ onRegister }) {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8080/users/register', 
+            const response = await axios.post('http://localhost:8080/users/register',
                 { username, email, password });
-            alert('Registration successful! Please log in.');
-            onRegister(response.data); // Pass the registered user data to the parent component
-        } catch (error) {
-            if (error.response && error.response.data) {
-                alert(`Registration failed: ${error.response.data}`);
-            } 
+
+           
+                alert('Registration successful!');
+                onRegister(response.data); // Pass the registered user data to the parent component
+            
+        }
+        catch (error) {
+            alert('Error' + (error.response?.data || error.message));
         }
     };
 

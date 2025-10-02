@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController{
     private final UserRep repo;
 

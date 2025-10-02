@@ -17,9 +17,9 @@ function App() {
       {!user ? (
         <>
         {showRegister ? (
-          <RegisterForm onRegister={() => setShowRegister(false)} />
+          <RegisterForm onRegister = {setUser} />
         ) : (
-        <LoginForm onLogin={setUser} />
+        <LoginForm onLogin = {setUser} />
         )}
         <button onClick={() => setShowRegister(!showRegister)}>
           {showRegister ? 'Back to Login' : 'Register'}
@@ -35,17 +35,3 @@ function App() {
   );
 }
   export default App;
-
-  /** 
-  return (
-    <div className="App">
-      <h1>Welcome to FitTrack</h1>
-      <p>Your personal fitness tracking application.</p>
-      <UserList />
-    
-      <h2>Workouts</h2>
-      <WorkoutForm />
-    </div>
-  );
-}*/
-
