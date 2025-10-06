@@ -3,7 +3,6 @@ package com.fitnesstracker.fittrack.controller;
 import com.fitnesstracker.fittrack.user.User;
 import com.fitnesstracker.fittrack.rep.UserRep;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
