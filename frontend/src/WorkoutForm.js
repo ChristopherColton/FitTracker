@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function WorkoutForm({ user }) {
@@ -9,6 +9,7 @@ function WorkoutForm({ user }) {
     const [weight, setWeight] = useState('');
     const [duration, setDuration] = useState('');
     const [date, setDate] = useState('');
+    const [workouts, setWorkouts] = useState([]);
 
     const workoutList = [
         'Bench Press',
@@ -22,6 +23,18 @@ function WorkoutForm({ user }) {
         'Tricep Extensions',
         'Custom'
     ];
+
+    useEffect(() => {
+        if (user && user.id) {
+            axios.get(`http://localhost:8080/workouts/users/${user.id}`)
+                .then(response => {
+                    setWorkouts(response.data);
+                })
+                .catch(error => {
+                    console.error('There was an error fetching the workouts!', error);
+                });
+        }
+    }, [user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,12 +53,15 @@ function WorkoutForm({ user }) {
             weight,
             duration,
             date,
-            user: { id: user.id } // Hardcoded pwease replace with actual user ID
+            user: { id: user.id }
         };
 
         try {
             await axios.post('http://localhost:8080/workouts', workout);
             alert('Workout logged successfully!');
+
+            const res = await axios.get(`http://localhost:8080/workouts/users/${user.id}`);
+            setWorkouts(res.data);
 
             // Clear form
             setExercise('');
@@ -123,6 +139,16 @@ function WorkoutForm({ user }) {
                 />
                 <button type="submit">Log Workout</button>
             </form>
+
+            <h3>Logged Workouts</h3>
+            <ul>
+                {workouts.map((w) => (
+                    <li key={w.id}>
+                        <strong>{w.exercise}</strong> - {w.sets} sets × {w.reps} reps @ {w.weight} lbs  
+              ({w.date})
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
