@@ -1,47 +1,84 @@
-
 /*Form styling*/
 form {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem 1.5rem;
-    background: beige;
+    grid-template-columns: 120px 1fr;
+    row-gap: 0.4rem;
+    column-gap: 0.8rem;
+    background-color: beige;
     border: 1px solid black;
     border-radius: 5px;
     padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 0 auto;
+    max-width: 480px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 form label {
-    display: flex;
-    flex-direction: column;
     font-weight: bold;
     color: maroon;
+    margin-right: 0.3rem;
+    text-align: right;
 }
 
-form input, form select, form button {
-    margin-top: 0.3rem;
-    padding: 0.4rem;
+form input,
+form select {
+    width: 100%;
+    padding: 0.4rem 0.5rem;
     border: 1px solid black;
     border-radius: 3px;
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
-form input:focus, form select:focus {
+form input:focus,
+form select:focus {
     outline: none;
     border-color: maroon;
-    box-shadow: 0 0 5px rgba(128,0,0,0.5);
-}   
+    box-shadow: 0 0 5px rgba(128, 0, 0, 0.5);
+}
 
 form button {
     background-color: maroon;
     color: white;
     cursor: pointer;
-    transition: background 0.2s;
+    grid-column: span 2;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    justify-self: right;
 }
 
 form button:hover {
     background-color: black;
+}
+
+.custom-input {
+    margin-top: 0.4rem;
+    grid-column: 2 / 3;
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid black;
+    border-radius: 3px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/*responsive css for button and workout form*/
+@media (max-width: 600px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    form label {
+        text-align: left;
+    }
+
+    form button {
+        grid-column: span 1;
+    }
 }
 
 h3 {
@@ -97,7 +134,7 @@ h3 {
     cursor: pointer;
     background-color: maroon;
     color: white;
-    transition: background 0.2s ;
+    transition: background 0.2s;
 }
 
 .dashboard-left li button:hover {
@@ -137,16 +174,19 @@ h3 {
     gap: 0.5rem;
 }
 
-.search-bar select, .search-bar input {
+.search-bar select,
+.search-bar input {
     padding: 0.3rem 0.5rem;
     border: 1px solid black;
     border-radius: 3px;
 }
 
+/*Responsive css dashboard*/
 @media (max-width: 900px) {
     .dashboard-container {
         flex-direction: column;
     }
+
     .dashboard-right {
         position: static;
         margin-top: 1rem;

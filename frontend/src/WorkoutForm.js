@@ -35,10 +35,10 @@ function WorkoutForm({ user }) {
 
     //get workouts for the user
     useEffect(() => {
-        if(user && user.id) {
+        if (user && user.id) {
             axios.get(`http://localhost:8080/workouts/users/${user.id}`).then(response => {
-                    setWorkouts(response.data);
-                })
+                setWorkouts(response.data);
+            })
                 .catch(error => {
                     console.error('There was an error fetching the workouts!', error);
                 });
@@ -50,11 +50,11 @@ function WorkoutForm({ user }) {
         e.preventDefault();
         const finalExercise = exercise === '(Custom)' ? customExercise : exercise;
 
-        if(!user || !user.id) {
+        if (!user || !user.id) {
             return alert('User not logged in!');
         }
 
-        if(!date) {
+        if (!date) {
             return alert('Please select a date for the workout.');
         }
 
@@ -72,10 +72,10 @@ function WorkoutForm({ user }) {
 
         //edit workout or otherwise create new workout
         try {
-            if(editWorkout) {
+            if (editWorkout) {
                 await axios.put(`http://localhost:8080/workouts/${editWorkout.id}`, workout);
                 setEditWorkout(null);
-            }else {
+            } else {
                 await axios.post('http://localhost:8080/workouts', workout);
                 alert('Workout logged successfully!');
             }
@@ -90,11 +90,11 @@ function WorkoutForm({ user }) {
             setReps('');
             setWeight('');
             setDate('');
-        }catch(error) {
+        } catch (error) {
             console.error('There was an error logging the workout!', error);
         }
     };
-    
+
 
     const handleEdit = (workout) => {
         setEditWorkout(workout);
@@ -127,7 +127,7 @@ function WorkoutForm({ user }) {
     const groupedWorkouts = workouts.reduce((groups, workout) => {
         const localDate = workout.date ? new Date(new Date(workout.date).getTime() + new Date(workout.date).getTimezoneOffset() * 60000).toLocaleDateString('en-CA') : 'Unknown Date';
 
-        if(!groups[localDate]) groups[localDate] = [];
+        if (!groups[localDate]) groups[localDate] = [];
         groups[localDate].push(workout);
         return groups;
     }, {});
@@ -135,10 +135,10 @@ function WorkoutForm({ user }) {
     //filter by search term
     const filteredWorkouts = searchTerm ? Object.keys(groupedWorkouts).reduce((filtered, date) => {
         const workoutsForDate = groupedWorkouts[date].filter(workout => {
-            if(searchType === 'exercise') {
+            if (searchType === 'exercise') {
                 return workout.exercise.toLowerCase().includes(searchTerm.toLowerCase());
             }
-            else if(searchType === 'date') {
+            else if (searchType === 'date') {
                 const localeDateString = new Date(new Date(workout.date).getTime() + new Date(workout.date).getTimezoneOffset() * 60000).toLocaleDateString('en-CA');
                 return localeDateString === searchTerm;
             }
@@ -146,7 +146,7 @@ function WorkoutForm({ user }) {
             return true;
         });
 
-        if(workoutsForDate.length > 0) {
+        if (workoutsForDate.length > 0) {
             filtered[date] = workoutsForDate;
         }
         return filtered;
@@ -160,13 +160,13 @@ function WorkoutForm({ user }) {
     });
 
     const calculateSummary = (workoutList) => {
-        if(!workoutList.length) {
+        if (!workoutList.length) {
             setSummary({
                 totalWorkoutsThisWeek: 0,
                 totalWeightThisWeek: 0,
                 mostFrequentExercise: 'N/A'
             });
-            
+
             return;
         }
 
@@ -188,8 +188,8 @@ function WorkoutForm({ user }) {
 
         let mostFrequent = 'N/A';
         let maxCount = 0;
-        for(const [exercise, count] of Object.entries(exerciseCount)) {
-            if(count > maxCount) {
+        for (const [exercise, count] of Object.entries(exerciseCount)) {
+            if (count > maxCount) {
                 maxCount = count;
                 mostFrequent = exercise;
             }
@@ -205,29 +205,31 @@ function WorkoutForm({ user }) {
         calculateSummary(workouts);
     }, [workouts]);
 
-    return(
+    return (
         <div>
             <h2>{editWorkout ? 'Edit Workout' : 'Log a New Workout'}</h2>
             <form onSubmit={handleSubmit}>
-                {/* Exercise Selection */}
-                <label>Exercise:</label>
-                <select value={exercise} onChange={(e) => setExercise(e.target.value)} required>
-                    <option value="">Select Exercise</option>
-                    {workoutList.map((w, idx) => (
-                        <option key={idx} value={w}>
-                            {w}
-                        </option>
-                    ))}
-                </select>
-
-                {/*Custom Exercise Input */}
-                {exercise === 'Custom' && (
+                
+                    {/* Exercise selection */}
+                    <label>Exercise:</label>
+                    <select value={exercise} onChange={(e) => setExercise(e.target.value)} required>
+                        <option value="">Select Exercise</option>
+                        {workoutList.map((w, idx) => (
+                            <option key={idx} value={w}>
+                                {w}
+                            </option>
+                        ))}
+                    </select>
+                
+                {/*Custom exercise input */}
+                {exercise === '(Custom)' && (
                     <input
                         type="text"
-                        placeholder="Enter custom exercise"
+                        placeholder="Enter Custom Exercise"
                         value={customExercise}
                         onChange={(e) => setCustomExercise(e.target.value)}
                         required
+                        className = "custom-input"
                     />
                 )}
 
@@ -255,7 +257,7 @@ function WorkoutForm({ user }) {
                     placeholder="Enter Weight"
                 />
 
-                
+
                 <label>Date:</label>
                 <input
                     type="date"
