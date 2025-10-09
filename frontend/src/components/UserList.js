@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import api from '../api';
 import axios from 'axios';
 
+/*Redunant file at the moment but kept for future use if i implement a admin dash for user info*/
+
 function UserList() {
     const [users, setUsers] = useState([]);
     useEffect(() => {

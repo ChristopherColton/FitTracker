@@ -8,7 +8,6 @@ function WorkoutForm({ user }) {
     const [sets, setSets] = useState('');
     const [reps, setReps] = useState('');
     const [weight, setWeight] = useState('');
-    const [duration, setDuration] = useState('');
     const [date, setDate] = useState('');
     const [workouts, setWorkouts] = useState([]);
     const [editWorkout, setEditWorkout] = useState(null);
@@ -67,7 +66,6 @@ function WorkoutForm({ user }) {
             sets,
             reps,
             weight,
-            duration,
             date: utcDate,
             user: { id: user.id }
         };
@@ -91,7 +89,6 @@ function WorkoutForm({ user }) {
             setSets('');
             setReps('');
             setWeight('');
-            setDuration('');
             setDate('');
         }catch(error) {
             console.error('There was an error logging the workout!', error);
@@ -105,7 +102,6 @@ function WorkoutForm({ user }) {
         setSets(workout.sets);
         setReps(workout.reps);
         setWeight(workout.weight);
-        setDuration(workout.duration);
         setDate(workout.date);
     };
 
@@ -259,13 +255,7 @@ function WorkoutForm({ user }) {
                     placeholder="Enter Weight"
                 />
 
-                <label>Duration (minutes):</label>
-                <input
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    placeholder="Enter Duration"
-                />
+                
                 <label>Date:</label>
                 <input
                     type="date"

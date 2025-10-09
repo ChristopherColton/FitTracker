@@ -47,7 +47,6 @@ public class WorkoutController {
             existingWorkout.setSets(workout.getSets());
             existingWorkout.setReps(workout.getReps());
             existingWorkout.setWeight(workout.getWeight());
-            existingWorkout.setDuration(workout.getDuration());
             existingWorkout.setDate(workout.getDate());
             return repo.save(existingWorkout);
         }).orElse(null);
