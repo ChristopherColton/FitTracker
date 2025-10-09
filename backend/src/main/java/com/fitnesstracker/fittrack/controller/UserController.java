@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping("/test")
     public String testUsers() {
-        return "Users endpoint is working 🚀";
+        return "Users endpoint is working!";
     }
 
     @PostMapping("/register")
