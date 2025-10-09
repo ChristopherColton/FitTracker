@@ -9,3 +9,5 @@ frontend/build/
 *.iml
 .idea/
 .vscode/
+
+.env
