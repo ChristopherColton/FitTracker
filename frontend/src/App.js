@@ -1,6 +1,4 @@
-import logo from './logo.svg';
 import './App.css';
-import UserList from './components/UserList';
 import React, { useState } from 'react';
 import WorkoutForm from './WorkoutForm';
 import LoginForm from './LoginForm';
@@ -9,8 +7,9 @@ import RegisterForm from './RegisterForm';
 function App() {
   const [user, setUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false);
+
   //login or register new user
-  return (
+  return(
     <div className="App">
       <h1>Welcome to FitTrack</h1>
       

@@ -11,15 +11,14 @@ function LoginForm({ onLogin }) {
         try {
             const response = await axios.post('http://localhost:8080/users/login', { email, password });
             alert('Login successful!');
-            onLogin(response.data); // Pass the logged-in user data to the parent component
-        }
-        catch (error) {
+            onLogin(response.data);
+        }catch(error) {
             alert("Invalid email or password.");
             console.error('There was an error logging in!', error);
         }
     };
 
-    return (
+    return(
         <div>
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>

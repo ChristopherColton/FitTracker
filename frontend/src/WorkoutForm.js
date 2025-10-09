@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './WorkoutForm.css';
 
 function WorkoutForm({ user }) {
     const [exercise, setExercise] = useState('');
@@ -14,7 +15,7 @@ function WorkoutForm({ user }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchType, setSearchType] = useState('exercise');
 
-    //predefined workout list
+    //predefined workout list with custom option
     const workoutList = [
         'Bench Press',
         'Squats',
@@ -35,9 +36,8 @@ function WorkoutForm({ user }) {
 
     //get workouts for the user
     useEffect(() => {
-        if (user && user.id) {
-            axios.get(`http://localhost:8080/workouts/users/${user.id}`)
-                .then(response => {
+        if(user && user.id) {
+            axios.get(`http://localhost:8080/workouts/users/${user.id}`).then(response => {
                     setWorkouts(response.data);
                 })
                 .catch(error => {
@@ -49,10 +49,9 @@ function WorkoutForm({ user }) {
     //submit workout form
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const finalExercise = exercise === '(Custom)' ? customExercise : exercise;
 
-        const finalExercise = exercise === 'Custom' ? customExercise : exercise;
-
-        if (!user || !user.id) {
+        if(!user || !user.id) {
             return alert('User not logged in!');
         }
 
@@ -62,7 +61,7 @@ function WorkoutForm({ user }) {
 
         const localDate = new Date(date + 'T00:00:00');
         const utcDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000).toISOString();
-        
+
         const workout = {
             exercise: finalExercise,
             sets,
@@ -73,12 +72,12 @@ function WorkoutForm({ user }) {
             user: { id: user.id }
         };
 
-        //edit workout if in edit mode, otherwise create new workout
+        //edit workout or otherwise create new workout
         try {
-            if (editWorkout) {
+            if(editWorkout) {
                 await axios.put(`http://localhost:8080/workouts/${editWorkout.id}`, workout);
                 setEditWorkout(null);
-            } else {
+            }else {
                 await axios.post('http://localhost:8080/workouts', workout);
                 alert('Workout logged successfully!');
             }
@@ -94,10 +93,11 @@ function WorkoutForm({ user }) {
             setWeight('');
             setDuration('');
             setDate('');
-        } catch (error) {
+        }catch(error) {
             console.error('There was an error logging the workout!', error);
         }
     };
+    
 
     const handleEdit = (workout) => {
         setEditWorkout(workout);
@@ -118,11 +118,11 @@ function WorkoutForm({ user }) {
                 console.error('There was an error deleting the workout!', error);
             }
         }
-    };  
+    };
 
     //format header date
     const formatDateHeader = (dateString) => {
-        if(!dateString || dateString === 'Unknown Date') return dateString;
+        if (!dateString || dateString === 'Unknown Date') return dateString;
         const [year, month, day] = dateString.split('-').map(Number);
         return new Date(year, month - 1, day).toLocaleDateString();
     };
@@ -131,19 +131,18 @@ function WorkoutForm({ user }) {
     const groupedWorkouts = workouts.reduce((groups, workout) => {
         const localDate = workout.date ? new Date(new Date(workout.date).getTime() + new Date(workout.date).getTimezoneOffset() * 60000).toLocaleDateString('en-CA') : 'Unknown Date';
 
-        if (!groups[localDate]) groups[localDate] = [];
+        if(!groups[localDate]) groups[localDate] = [];
         groups[localDate].push(workout);
         return groups;
     }, {});
 
     //filter by search term
     const filteredWorkouts = searchTerm ? Object.keys(groupedWorkouts).reduce((filtered, date) => {
-        const workoutsForDate = groupedWorkouts[date].filter(workout =>
-        {
-            if (searchType === 'exercise') {
+        const workoutsForDate = groupedWorkouts[date].filter(workout => {
+            if(searchType === 'exercise') {
                 return workout.exercise.toLowerCase().includes(searchTerm.toLowerCase());
             }
-            else if (searchType === 'date') {
+            else if(searchType === 'date') {
                 const localeDateString = new Date(new Date(workout.date).getTime() + new Date(workout.date).getTimezoneOffset() * 60000).toLocaleDateString('en-CA');
                 return localeDateString === searchTerm;
             }
@@ -151,19 +150,66 @@ function WorkoutForm({ user }) {
             return true;
         });
 
-        if (workoutsForDate.length > 0) {
+        if(workoutsForDate.length > 0) {
             filtered[date] = workoutsForDate;
         }
         return filtered;
-    } , {}) : groupedWorkouts;
+    }, {}) : groupedWorkouts;
 
-    const [summary, setSummary] = useState({ 
-        totalWorkoutsThisWeek: 0, 
-        totalWeightThisWeek: 0, 
+    //summary dash
+    const [summary, setSummary] = useState({
+        totalWorkoutsThisWeek: 0,
+        totalWeightThisWeek: 0,
         mostFrequentExercise: 'N/A'
     });
 
-    return (
+    const calculateSummary = (workoutList) => {
+        if(!workoutList.length) {
+            setSummary({
+                totalWorkoutsThisWeek: 0,
+                totalWeightThisWeek: 0,
+                mostFrequentExercise: 'N/A'
+            });
+            
+            return;
+        }
+
+        const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+
+        const workoutsThisWeek = workoutList.filter(w => {
+            const workoutDate = new Date(new Date(w.date).getTime() + new Date(w.date).getTimezoneOffset() * 60000);
+            return workoutDate >= startOfWeek && workoutDate <= now;
+        });
+
+        const totalWeight = workoutsThisWeek.reduce((total, w) => total + (w.weight || 0) * (w.sets || 0) * (w.reps || 0), 0);
+        const exerciseCount = {};
+
+        workoutsThisWeek.forEach(w => {
+            exerciseCount[w.exercise] = (exerciseCount[w.exercise] || 0) + 1;
+        });
+
+        let mostFrequent = 'N/A';
+        let maxCount = 0;
+        for(const [exercise, count] of Object.entries(exerciseCount)) {
+            if(count > maxCount) {
+                maxCount = count;
+                mostFrequent = exercise;
+            }
+        }
+
+        setSummary({
+            totalWorkoutsThisWeek: workoutsThisWeek.length,
+            totalWeightThisWeek: totalWeight,
+            mostFrequentExercise: mostFrequent
+        });
+    }
+    useEffect(() => {
+        calculateSummary(workouts);
+    }, [workouts]);
+
+    return(
         <div>
             <h2>{editWorkout ? 'Edit Workout' : 'Log a New Workout'}</h2>
             <form onSubmit={handleSubmit}>
@@ -174,7 +220,7 @@ function WorkoutForm({ user }) {
                     {workoutList.map((w, idx) => (
                         <option key={idx} value={w}>
                             {w}
-                            </option>
+                        </option>
                     ))}
                 </select>
 
@@ -192,7 +238,7 @@ function WorkoutForm({ user }) {
                 <label>Sets:</label>
                 <select value={sets} onChange={(e) => setSets(e.target.value)} required>
                     <option value="">Select Sets</option>
-                    {[1 ,2, 3, 4, 5].map((num) => (
+                    {[1, 2, 3, 4, 5].map((num) => (
                         <option key={num} value={num}>{num}</option>
                     ))}
                 </select>
@@ -200,17 +246,17 @@ function WorkoutForm({ user }) {
                 <label>Reps:</label>
                 <select value={reps} onChange={(e) => setReps(e.target.value)} required>
                     <option value="">Select Reps</option>
-                    {[...Array(15).keys()].map((num) => (
-                        <option key={num + 1} value={num+1}>{num + 1}</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                        <option key={num} value={num}>{num}</option>
                     ))}
-                </select>   
+                </select>
 
                 <label>Weight (lbs):</label>
                 <input
                     type="number"
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
-                    placeholder="Enter weight lifted"
+                    placeholder="Enter Weight"
                 />
 
                 <label>Duration (minutes):</label>
@@ -218,7 +264,7 @@ function WorkoutForm({ user }) {
                     type="number"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    placeholder="Enter duration"
+                    placeholder="Enter Duration"
                 />
                 <label>Date:</label>
                 <input
@@ -232,7 +278,7 @@ function WorkoutForm({ user }) {
 
             <h3>Logged Workouts</h3>
             <div>
-                <label htmlFor ="searchType">Search by: </label>
+                <label htmlFor="searchType">Search by: </label>
                 <select id="searchType" value={searchType} onChange={(e) => setSearchType(e.target.value)}>
                     <option value="exercise">Exercise</option>
                     <option value="date">Date</option>
@@ -252,31 +298,44 @@ function WorkoutForm({ user }) {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                )}   
-
-                        
+                )}
             </div>
 
-            
+            <div className="dashboard-container">
+                {/*left side workout log*/}
+                <div className="dashboard-left">
+                    {Object.keys(filteredWorkouts).length === 0 ? (
+                        <p>No workouts logged yet.</p>
+                    ) : (
+                        Object.keys(filteredWorkouts).sort((a, b) => new Date(b) - new Date(a)).map(date => (
+                            <div key={date}>
+                                <h4>{formatDateHeader(date)}</h4>
+                                <ul>
+                                    {filteredWorkouts[date].map((w) => (
+                                        <li key={w.id}>
+                                            <div>
+                                                <strong>{w.exercise}</strong> - {w.sets} sets × {w.reps} reps @ {w.weight} lbs ({w.date})
+                                            </div>
+                                            <div>
+                                                <button onClick={() => handleEdit(w)}>Edit </button>
+                                                <button onClick={() => handleDelete(w.id)}>Delete </button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))
+                    )}
+                </div>
 
-            {Object.keys(filteredWorkouts).length === 0 ? (
-                <p>No workouts logged yet.</p>
-            ) : (
-                Object.keys(filteredWorkouts).sort((a, b) => new Date(b) - new Date(a)).map(date => (
-                    <div key={date}>
-                        <h4>{formatDateHeader(date)}</h4>
-                        <ul>
-                            {filteredWorkouts[date].map((w) => (
-                                <li key={w.id}>
-                                    <strong>{w.exercise}</strong> - {w.sets} sets × {w.reps} reps @ {w.weight} lbs ({w.date})
-                                    <button onClick={() => handleEdit(w)}>Edit </button>
-                                    <button onClick={() => handleDelete(w.id)}>Delete </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))
-            )}
+                {/*right side summary*/}
+                <div className="dashboard-right">
+                    <h3>Workout Summary (This Week)</h3>
+                    <p>Total Workouts: {summary.totalWorkoutsThisWeek}</p>
+                    <p>Total Weight Lifted: {summary.totalWeightThisWeek} lbs</p>
+                    <p>Most Frequent Exercise: {summary.mostFrequentExercise}</p>
+                </div>
+            </div>
         </div>
     );
 }

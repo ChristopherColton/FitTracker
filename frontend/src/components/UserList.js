@@ -5,8 +5,7 @@ import axios from 'axios';
 function UserList() {
     const [users, setUsers] = useState([]);
     useEffect(() => {
-        axios.get('http://localhost:8080/users')
-            .then(response => {
+        axios.get('http://localhost:8080/users').then(response => {
                 setUsers(response.data);   
             })
             .catch(error => {
