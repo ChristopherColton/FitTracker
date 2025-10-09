@@ -7,31 +7,30 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:3000")
-public class UserController{
+public class UserController {
     private final UserRep repo;
 
-    public UserController(UserRep repo){
+    public UserController(UserRep repo) {
         this.repo = repo;
     }
 
     @GetMapping
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return repo.findAll();
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user){
+    public User createUser(@RequestBody User user) {
         return repo.save(user);
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id){
+    public User getUserById(@PathVariable Long id) {
         return repo.findById(id).orElse(null);
-    }   
+    }
 
     @GetMapping("/test")
     public String testUsers() {
@@ -50,6 +49,6 @@ public class UserController{
     @PostMapping("/login")
     public User loginUser(@RequestBody User loginUser) {
         return repo.findByEmailAndPassword(loginUser.getEmail(), loginUser.getPassword())
-        .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
     }
 }
