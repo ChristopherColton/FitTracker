@@ -9,11 +9,11 @@ import RegisterForm from './RegisterForm';
 function App() {
   const [user, setUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false);
-
+  //login or register new user
   return (
     <div className="App">
       <h1>Welcome to FitTrack</h1>
-
+      
       {!user ? (
         <>
         {showRegister ? (

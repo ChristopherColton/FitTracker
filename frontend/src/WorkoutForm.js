@@ -157,6 +157,12 @@ function WorkoutForm({ user }) {
         return filtered;
     } , {}) : groupedWorkouts;
 
+    const [summary, setSummary] = useState({ 
+        totalWorkoutsThisWeek: 0, 
+        totalWeightThisWeek: 0, 
+        mostFrequentExercise: 'N/A'
+    });
+
     return (
         <div>
             <h2>{editWorkout ? 'Edit Workout' : 'Log a New Workout'}</h2>
