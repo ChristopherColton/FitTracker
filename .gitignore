@@ -15,3 +15,6 @@ frontend/build/
 *.env
 backend/*.env
 frontend/*.env
+
+# Application properties
+backend/src/main/resources/application.properties
